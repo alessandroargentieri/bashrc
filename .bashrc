@@ -477,6 +477,23 @@ clean-file() {
     cat /dev/null > $1
 }
 
+alias mvndebug='~/workspace/apache-maven-3.8.3-bin/bin/mvnDebug.cmd' # clean install
+
+# returns the exposed port for a k8s pod
+# $ kube-pod-port mongo-75f6385hf-67dgs4
+# 27017
+kube-pod-port() {
+   kubectl get pod $1 --template='{{(index (index .spec.containers 0).ports 0).containerPort}}{{"\n"}}'
+}
+# later you can port forward on the node:
+# $ kubectl port-forward mongo-75f6385hf-67dgs4 28015:27017
+
+# returns all the pods deployed on a given k8s node:
+# $ kube-node-pods k3d-demo-agent-0
+kube-node-pods() {
+    kubectl get pods --all-namespaces -o wide --field-selector spec.nodeName=$1
+}
+
 # ~/.gitconfig ALIASES
 #[alias]
 #    ls = "!f() { git log $1 --pretty=format:\"%C(yellow)%h%Cred%d\\\\ %Creset%s%Cgreen\\\\ [%ae,%ar]\" --decorate --graph; }; f"
