@@ -378,6 +378,65 @@ split-get() {
    fi          
 }
 
+# cat "hello how are you?" | spl -d ' ' -p 0 
+# > hello
+# array=`spl --file myfile.txt --delimiter ':'` && echo "${array[2]}"
+# > re
+spl() {
+    index=0
+    dindex=-10
+    pindex=-10
+    findex=-10
+
+    for var in "$@"
+    do
+       if [[ "$index" == $(($dindex+1)) ]]; then
+	  delimiter=$var
+       elif [[ "$index" == $(($pindex+1)) ]]; then
+	  position=$var   
+       elif [[ "$index" == $(($findex+1)) ]]; then
+          filename=$var   
+       elif [[ "$var" == "-d" || "$var" == "--delimiter" ]]; then
+	  dindex=$index
+       elif [[ "$var" == "-p" || "$var" == "--position" ]]; then
+          pindex=$index  
+       elif [[ "$var" == "-f" || "$var" == "--file" ]]; then
+	  findex=$index    
+       elif [[ "$var" == "-h" || "$var" == "--help" ]]; then
+          echo "Usage:"
+	  echo "spl -d <delimeter> -p <position-from-zero> -f <filename>"
+          echo "or"
+          echo "spl --delimeter <delimeter> --position <position-from-zero> --file <filename>"
+          echo "or"
+          echo "cat <filename> | spl --delimeter <delimeter> --position <position-from-zero>"
+          echo "or to have the entire array"
+          echo "spl -d <delimeter> -f <filename>"  
+          return 0    
+       fi
+       index=$(($index+1)) 
+    done
+
+    if [[ -z "$delimiter" ]]; then
+        echo "No delimiter specified with -d or --delimeter flag"
+        return 1
+    fi    
+
+    if [[ -z "$filename" ]]; then
+       filecontent=$( < /dev/stdin )
+    else
+       filecontent=$(cat $filename)
+    fi
+
+    splitted=(${filecontent//$delimiter/ })
+   
+    if [[ -z "$position" ]]; then
+       $splitted
+       return 0
+    fi
+	
+    echo "${splitted[$position]}"
+}
+
 # prints from line x to line y of a given file.
 # Usage:
 # $ middle 11 15 file.txt
