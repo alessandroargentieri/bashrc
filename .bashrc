@@ -153,6 +153,7 @@ alias version='cat /proc/version'
 alias idea='/snap/bin/intellij-idea-community'
 
 # curl json with headers in the response
+alias curl='curl -kLs' # allow insecure, follow redirects, hide progress
 alias curlj='curl -s -D - -H "Content-Type: application/json;charset=utf-8"'
 
 # look for a process with ps command and grep
