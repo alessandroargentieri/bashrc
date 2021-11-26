@@ -539,6 +539,9 @@ clean-file() {
 
 alias mvndebug='~/workspace/apache-maven-3.8.3-bin/bin/mvnDebug.cmd' # clean install
 
+# shows all the aliases defined in .bashrc
+alias aliases='grep "alias " ~/.bashrc'
+
 # returns the exposed port for a k8s pod
 # $ kube-pod-port mongo-75f6385hf-67dgs4
 # 27017
