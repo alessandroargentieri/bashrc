@@ -133,6 +133,15 @@ alias docker-ids='docker ps -q' # docker ps | cut -d " " -f 1
 alias docker-ps='docker ps --format "{{.ID}} --- {{.Names}}"'
 alias docker-stop-all='docker stop $(docker ps -q) 2>/dev/null || echo "No containers running"'
 
+# useful only for Mac OS Silicon M1, 
+# still working but useless for the other platforms
+docker() {
+  if [[ `uname -m` == "arm64" && "$1" == "run" ]]; then
+    /usr/local/bin/docker run --platform linux/amd64 "${@:2}"
+  else
+     /usr/local/bin/docker "$@"
+  fi
+}
 
 # shorten the terminal location line to just the current line
 # for that specific terminal process
