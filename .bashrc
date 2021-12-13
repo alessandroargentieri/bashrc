@@ -152,6 +152,7 @@ docker() {
 # /your/maven/project/directory - $ maven jdk8 clean install
 # /your/maven/project/directory - $ maven clean package
 maven() {
+    mkdir -p $HOME/.m2/repository
     if [[ "$1" == "jdk8" ]]; then
         docker run --rm -v $PWD:/usr/src/app -v $HOME/.m2:/root/.m2 -w /usr/src/app maven:3.8-adoptopenjdk-8 mvn "${@:2}"
     elif [[ "$1" == "jdk11" ]]; then
