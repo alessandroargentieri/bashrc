@@ -143,6 +143,24 @@ docker() {
   fi
 }
 
+# executes a containerized version of maven so you don't have to install it to your computer.
+# you need to have docker installed and running.
+# append this snippet to your .bashrc/.zshrc/.bash_profile/.zsh_profile files.
+# you can specify 'jdk8' or 'jdk11' as first argument to switch jdk.
+# if not specified, jdk11 is the default.
+# usage example: 
+# /your/maven/project/directory - $ maven jdk8 clean install
+# /your/maven/project/directory - $ maven clean package
+maven() {
+    if [[ "$1" == "jdk8" ]]; then
+        docker run --rm -v $PWD:/usr/src/app -v $HOME/.m2:/root/.m2 -w /usr/src/app maven:3.8-adoptopenjdk-8 mvn "${@:2}"
+    elif [[ "$1" == "jdk11" ]]; then
+        docker run --rm -v $PWD:/usr/src/app -v $HOME/.m2:/root/.m2 -w /usr/src/app maven:3.8-eclipse-temurin-11 mvn "${@:2}"
+    else 
+        docker run --rm -v $PWD:/usr/src/app -v $HOME/.m2:/root/.m2 -w /usr/src/app maven:3.8-eclipse-temurin-11 mvn "$@"
+    fi
+}
+
 # shorten the terminal location line to just the current line
 # for that specific terminal process
 alias shortpath='export PS1="\[\033[32m\]\W\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "'
