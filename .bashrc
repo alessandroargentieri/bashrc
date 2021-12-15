@@ -172,6 +172,22 @@ golang() {
   docker run --rm -v $PWD:/usr/src/myapp -w /usr/src/myapp golang:1.17 go "$@"
 }
 
+# exposes a port of your host on the internet through a generated public url.
+# example: you have a web server lostening on your host on http://localhost:8080/myservice/hello
+# to expose it you just have to write: $ localtunnel 8080
+# in a few seconds the public url will be shown on your terminal, let's suppose is https://dull-firefox-10.loca.lt
+# then anybody on the internet can reach the API running on your computer with:
+# curl -H 'Bypass-Tunnel-Reminder: true' https://dull-firefox-10.loca.lt/myservice/hello 
+localtunnel() {
+   docker rm -f localtunnel &> /dev/null
+   docker run -it -d --name localtunnel --network host efrecon/localtunnel --port $1 > /dev/null
+   echo "Creating the connection. Please wait..."
+   sleep 5
+   export LOCAL_TUNNEL_URL=$(docker logs localtunnel | cut -d ' ' -f 4)
+   echo "Your host port $1 is reachable to the public endpoint $LOCAL_TUNNEL_URL"
+   echo 'You can use exported env variable $LOCAL_TUNNEL_URL'
+}
+
 # shorten the terminal location line to just the current line
 # for that specific terminal process
 alias shortpath='export PS1="\[\033[32m\]\W\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "'
