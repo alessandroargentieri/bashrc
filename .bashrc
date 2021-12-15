@@ -162,6 +162,16 @@ maven() {
     fi
 }
 
+
+# allows you to use go 17 without installing on your computer
+# usage example: 
+# /your/go/project/directory - $ golang run main.go
+# /your/go/project/directory - $ golang test ./... -p 1 -count 1
+# /your/go/project/directory - $ golang build .
+golang() {
+  docker run --rm -v $PWD:/usr/src/myapp -w /usr/src/myapp golang:1.17 go "$@"
+}
+
 # shorten the terminal location line to just the current line
 # for that specific terminal process
 alias shortpath='export PS1="\[\033[32m\]\W\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "'
