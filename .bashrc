@@ -136,7 +136,7 @@ alias docker-stop-all='docker stop $(docker ps -q) 2>/dev/null || echo "No conta
 # useful only for Mac OS Silicon M1, 
 # still working but useless for the other platforms
 docker() {
-  if [[ `uname -m` == "arm64" && "$1" == "run" ]]; then
+  if [[ `uname -m` == "arm64" ]] && [[ "$1" == "run" || "$1" == "build" || "$1" == "pull" ]]; then
     /usr/local/bin/docker run --platform linux/amd64 "${@:2}"
   else
      /usr/local/bin/docker "$@"
