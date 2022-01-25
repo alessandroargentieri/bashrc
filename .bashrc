@@ -157,11 +157,19 @@ maven() {
         docker run --rm -v $PWD:/usr/src/app -v $HOME/.m2:/root/.m2 -w /usr/src/app maven:3.8-adoptopenjdk-8 mvn "${@:2}"
     elif [[ "$1" == "jdk11" ]]; then
         docker run --rm -v $PWD:/usr/src/app -v $HOME/.m2:/root/.m2 -w /usr/src/app maven:3.8-eclipse-temurin-11 mvn "${@:2}"
+    elif [[ "$1" == "jdk6" ]]; then
+        docker run --rm -v $PWD:/usr/src/app -v $HOME/.m2:/root/.m2 -w /usr/src/app maven:3.2-jdk-6 mvn "${@:2}"	
     else 
         docker run --rm -v $PWD:/usr/src/app -v $HOME/.m2:/root/.m2 -w /usr/src/app maven:3.8-eclipse-temurin-11 mvn "$@"
     fi
 }
 
+# shows you the tree of maven dependencies imported in your progect
+mvn-tree() {
+    mvn org.apache.maven.plugins:maven-dependency-plugin:2.8:tree
+}
+alias maven-tree='mvn-tree'
+alias mvntree='mvn-tree'
 
 # allows you to use go 17 without installing on your computer
 # usage example: 
@@ -170,6 +178,22 @@ maven() {
 # /your/go/project/directory - $ golang build .
 golang() {
   docker run --rm -v $PWD:/usr/src/myapp -w /usr/src/myapp golang:1.17 go "$@"
+}
+
+# runs bash v5 not present on MacOSx
+bash5() {
+  docker run --rm -v $PWD:/usr/src/myapp -w /usr/src/myapp bash:5.1-alpine3.14 bash "$@"
+}
+
+# convers curl in wget
+wget() {
+   if [[ "$#" -ne 3 ]]; then 
+      # wget <URL>
+      curl -LO $1
+   elif [[ "$2" == "-O" ]]; then
+      # wget <URL> -O <filename> 
+      curl -L -o $3 $1   
+   fi
 }
 
 # exposes a port of your host on the internet through a generated public url.
@@ -233,7 +257,6 @@ alias local-ip='hostname -I | cut -d " " -f 1'
 subnetscan() {
   nmap -sn ${1} -oG - | awk '$4=="Status:" && $5=="Up" {print $2}'
 }
-
 
 # Scan subnet for available IPs
 # Example:
@@ -322,7 +345,19 @@ deleteline() { sed "/$1/d" -i $2; }
 repeatfn() { while read line; do $1; done < "$2"; }
 
 # let you open a file with its default program. Ex. Open current folder: $ open .
-alias open='xdg-open'
+# FOR MAC OS is not necessary
+# alias open='xdg-open'
+case "$OSTYPE" in
+   cygwin*)
+      alias open="cmd /c start"
+      ;;
+   linux*)
+      alias open="xdg-open"
+      ;;
+   darwin*)
+      # alias open="open" not necessary for mac
+      ;;
+esac
 
 # launch a command into another terminal.
 # Example:
@@ -342,8 +377,12 @@ alias d='docker'
 alias g='git'
 alias k='kubectl'
 
+alias gut='echo "`tput setaf 5``tput bold`You probabily meant git`tput sgr0`"; git'
+alias gi='echo "`tput setaf 5``tput bold`You probabily meant git`tput sgr0`"; git'
+
 # let you refresh the current terminal when you update .bashrc file adding aliases or functions
 alias bashrc='source ~/.bashrc'
+alias zshrc='source ~/.zshrc'
 
 # just an exercise to selectively delete files in a Java project
 go-delete-tests() {
@@ -610,6 +649,9 @@ kube-pod-port() {
 kube-node-pods() {
     kubectl get pods --all-namespaces -o wide --field-selector spec.nodeName=$1
 }
+
+# for mac
+#alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
 
 # ~/.gitconfig ALIASES
 #[alias]
