@@ -276,6 +276,8 @@ alias ping='ping -c 4'
 
 # grep string in entire directory (binary files excluded with the -I option)
 alias grepdir='grep -nrI' #<string to be searched>
+alias findfile='find . -type f -name' #<regex on name> es. '*.go'
+alias finddir='find . -type d -name' #<regex on name> es. 'backup_*'
 
 # show CPUs temperature (you must have sensors installed)
 alias temp='sensors | head -20 | tail -9'
@@ -650,21 +652,92 @@ kube-node-pods() {
     kubectl get pods --all-namespaces -o wide --field-selector spec.nodeName=$1
 }
 
+kube-logs-cheatsheet() {
+  echo "Cheatsheet:"
+  echo "kubectl logs --since=15m <podname>"
+  echo "kubectl logs --tail=100 -f <podname>"
+  echo "kubectl logs --previous <podname>"
+}
+
+alias kube-get-context='kubectl config get-contexts'
+alias kube-set-context='kubectl config use-context' #<context-name> check in the ~/.kube/config file or in the $KUBECONFIG env var
+alias kube-logs='kubectl logs --tail=100 -f' # <podname> --namespace <namespacename>
+
+alias tilde='echo "option+5 = ~ "'
+alias apice='echo "backtick = option+9"'
+
 # for mac
 #alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
 
-# ~/.gitconfig ALIASES
+remove-first-last() {
+  string=$1
+  if [ "$#" == 0 ]; then 
+     string=$( < /dev/stdin )
+  fi
+  echo "${string:1:${#string}-2}"
+}
+
+alias goenv='go env'
+alias goenvs='go env'
+
+clear
+
+#CONTENT OF THE FILE ~/.gitconfig
 #[alias]
-#    ls = "!f() { git log $1 --pretty=format:\"%C(yellow)%h%Cred%d\\\\ %Creset%s%Cgreen\\\\ [%ae,%ar]\" --decorate --graph; }; f"
-#    lsi = log --pretty=format:\"%C(yellow)%h%Cred%d\\\\ %Creset%s%Cgreen\\\\ [%ae,%ar]\" --decorate --graph | head -5
-#    lasttag = "!f(){git describe --tags `git rev-list --tags --max-count=1`};f"
-#    last-tag = !git fetch -tp && git describe --tags
-#    bl = blame -c --date=short
-#    CHECKOUT = "findallfiles 'Test'() { git checkout  2>/dev/null || git checkout -b ; }; f"
-#    switch = "!f() { git checkout $1 2>/dev/null || git checkout -b $1; }; f"
-#    switch2 = "!f() { git checkout $1 2>/dev/null || git checkout -b $1; }; f"
-#    commits-behind = "!f() { git fetch -tp > /dev/null 2>&1; git log --oneline $(git branch --show-current)..$1; }; f"
-#    branch-name = branch --show-current
-#    delete-branch = "!f() { if [ \"$#\" == 0 ]; then echo \"You must specify the branch to be deleted!\"; elif [ \"$#\" == 1 ]; then echo \"git branch -D $1\"; elif [ \"$1\" == \"-a\" ]; then echo \"git branch -D $2 && git push origin --delete $2\"; elif [ \"$1\" == \"-r\" ]; then echo \"git push origin --delete $2\"; else echo \"git branch -D $2\"; fi; }; f"
-#    get-status = "!f() { if [[ \"$1\" == \"ciao\" ]]; then echo \"mi hai salutato!\"; fi; git fetch -tp; git status; echo \"$1\"; }; f"
-#    wip = "!f() { git stash save $1 -u ; }; f"
+#	ls = "!f() { git log $1 --pretty=format:\"%C(yellow)%h%Cred%d\\\\ %Creset%s%Cgreen\\\\ [%ae,%ar]\" --decorate --graph; }; f"
+#	bl = blame -c --date=short
+#	switch = "!f() { git checkout $1 2>/dev/null || git checkout -b $1; }; f"
+#	wip = "!f() { git stash save $1 -u ; }; f"
+#	wip-apply = "!f() { temp=$(git stash list | cut -d : -f 3 | grep -n -w $1 | cut -d : -f 1) ; stashnum=$((temp-1)) ; stashname=$(echo stash@{$stashnum}) ; git stash apply $stashname ; }; f"
+#	commits-behind = "!f() { git fetch -tp > /dev/null 2>&1; git log --oneline $(git branch --show-current)..$1; }; f"
+#	commits-diff = "!f() { git fetch -tp > /dev/null 2>&1; git log --oneline $(git branch --show-current)...$1; }; f"
+#	branch-name = branch --show-current
+#	tag-info = log -1 --format=%ai
+#	behind = "!f() { git fetch -tp &>/dev/null; export BRANCH_NAME=$(git branch --show-current); git log --oneline $BRANCH_NAME..origin/${BRANCH_NAME}; }; f"
+#	reset-hard = "!f() { git reset --hard; git clean -df ; }; f"
+#	aliases = "!f() { git config --get-regexp \"^alias\\.\" | cut -d \" \" -f 1 | cut -d \".\" -f 2 ; }; f"
+#	get-alias = "!f() { git config --get-regexp \"^alias\\.\" | grep $1 ; }; f"
+#	whoami = "!f() { echo \"`git config user.name` `git config user.email`\"; }; f"
+#	get-url = config --get remote.origin.url
+#	set-url = "!f() { git remote set-url origin $1 ; }; f"
+#	add-all = "!f() { git add . ; git restore --staged \"*/factory.lic\" ; }; f"
+#	tags = "!f() { if [ \"$1\" == \"-r\" ] || [ \"$1\" == \"--remote\" ]; then git ls-remote --tags origin; else git tag; fi; }; f"
+#	lasttag = "!f() { git fetch -tp &>/dev/null; git tag -l v${1}* --sort=v:refname | tail -1; }; f"
+#	release = "!f() {                      \n    RESET=`tput sgr0`\n    GREEN=`tput setaf 2`\n    CYAN=`tput setaf 6`\n    YELLOW=`tput setaf 3`\n    BOLD=`tput bold` \n\n    LASTTAG=$(git lasttag)\n    [ \"$LASTTAG\" != \"\" ] || LASTTAG=\"v0.0.0\"\n    VERSION=$(echo \"$LASTTAG\" | cut -d v -f 2)\n                    \n    SPLITTED=(${VERSION//./ })                                 \n    for i in {0..2}                                            \n    do                                                         \n       SPLITTED[$i]=`echo ${SPLITTED[$i]} | cut -d - -f 1`   \n       [ \"${SPLITTED[$i]}\" != \"\" ] || SPLITTED[$i]=0           \n    done                                                       \n                                                               \n    INDEX=2  \n    if [ \"$1\" == \"--help\" ] || [ \"$1\" == \"-h\" ] || [ \"$1\" == \"--usage\" ]; then \n       echo \"\" \n       echo \"Creates a ${BOLD}${YELLOW}new tag${RESET} from the current commit.\"\n       echo \"Usage: \"\n       echo \"  git release ${GREEN}[--patch] ${CYAN}# creates a new patch release ${RESET}\"\n       echo \"  git release  --minor  ${CYAN}# creates a new minor release  ${RESET}\"\n       echo \"  git release  --major  ${CYAN}# creates a new major release  ${RESET}\"\n       exit 0\n    elif [[ \"$1\" == \"--major\" ]]; then                           \n       SPLITTED[0]=$((SPLITTED[0]+1))   \n       SPLITTED[1]=0\n       SPLITTED[2]=0                       \n       INDEX=0                                                 \n    elif [[ \"$1\" == \"--minor\" ]]; then                         \n       SPLITTED[1]=$((SPLITTED[1]+1))   \n       SPLITTED[2]=0                       \n       INDEX=1                                                 \n    else                                                       \n       SPLITTED[2]=$((SPLITTED[2]+1))                          \n    fi                                                         \n                                                       \n    echo \"Latest tag found: ${BOLD}${YELLOW} `git lasttag`${RESET}\"                                                           \n    git tag v${SPLITTED[0]}.${SPLITTED[1]}.${SPLITTED[2]}      \n    echo \"New release tag: ${BOLD}${GREEN} `git lasttag`${RESET}\"\n}; f"
+#	ch = checkout
+#	st = status
+#	statsu = status
+#	stats = status
+#	tstatus = status
+#	m = merge
+#	com = commit
+#	a = add
+#	t = tag
+#	f = fetch -tp
+#	statys = status
+#	statyus = status
+#	x = log --oneline
+#	statsy = status
+#	addmod = "!f() { git ls-files --modified | xargs git add; }; f"
+#	unstage = restore --staged .
+#	revert-merge = revert -m 1.
+#	stayus = status
+#	sttaus = status
+#	sttats = status
+#	tag-date = "!f() { git log --tags --simplify-by-decoration --pretty=\"format:%ci %d\" | grep $1; }; f"
+#	statuys = status
+#	remote2remote = "!f() { git fetch -tp &>/dev/null; git checkout origin/$1 &> /dev/null; git push -f origin HEAD:refs/heads/$2; git checkout - > /dev/null; }; f"
+#	get-remote-url = "!f() { git config --get remote.$1.url; }; f"
+#	set-remote-url = "!f() { git remote set-url $1 $2 ; }; f"
+#	reset-author = "!f() { git config user.email alexmawashi87@gmail.com; git config user.name \"alessandroargentieri\"; git commit --amend --reset-author; }; f"
+#[http]
+#	sslVerify = false
+#[includeIf "gitdir:~/toplevelFolder1/"]
+#    path = ~/Desktop/work/projects/.gitconfig_include
+#[pull]
+#	rebase = false
+
+#CONTENT OF THE FILE ~/Desktop/work/projects/.gitconfig_include
+#[user]
+#    name = Alessandro Argentieri
+#    email = alessandro.argentieri@overit.it
