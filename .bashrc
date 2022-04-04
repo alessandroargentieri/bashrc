@@ -188,6 +188,35 @@ bash5() {
   docker run --rm -v $PWD:/usr/src/myapp -w /usr/src/myapp bash:5.1-alpine3.14 bash "$@"
 }
 
+# nohup implementation using disown: just to play!
+# nohupp ./ciao 
+# equivalent to
+# nohup ./ciao &
+# there is a problem! If you kill the PID it appears, the file is still filled by the background process
+# so you must look for the process attached to it with: fuser -c nohup.out
+nohupp() {
+  ${@} &>nohup.out &
+  disown
+}
+
+# finds processes attached to a file
+alias who-is-using='fuser -c' # who-is-using output.txt
+
+background-process() {
+  echo "There are two ways:"
+  echo ""
+  echo "nohup ./ciao.sh &"
+  echo "tail -f nohup.out"
+  echo ""
+  echo "./ciao.sh &>disown.out &"
+  echo "disown"
+  echo "tail -f disown.out"
+}
+
+# instructions to build scripts
+alias last-param='echo ${@: -1}'
+alias all-but-last-param='echo ${@:1:$#-1}'
+
 # convers curl in wget
 wget() {
    if [[ "$#" -ne 3 ]]; then 
