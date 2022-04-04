@@ -177,7 +177,10 @@ alias mvntree='mvn-tree'
 # /your/go/project/directory - $ golang test ./... -p 1 -count 1
 # /your/go/project/directory - $ golang build .
 golang() {
-  docker run --rm -v $PWD:/usr/src/myapp -w /usr/src/myapp golang:1.17 go "$@"
+  name=go-in-docker-$RANDOM
+  echo "executed in docker. Container name: $name"
+  docker run --rm -d --network host -v $PWD:/usr/src/myapp -w /usr/src/myapp --name ${name} golang:1.17 go "$@"
+  docker logs --follow ${name}
 }
 
 # runs bash v5 not present on MacOSx
