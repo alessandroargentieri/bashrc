@@ -698,6 +698,18 @@ alias kube-logs='kubectl logs --tail=100 -f' # <podname> --namespace <namespacen
 alias tilde='echo "option+5 = ~ "'
 alias apice='echo "backtick = option+9"'
 
+
+# ephemeral redis-cli terminal connected to a given host
+# usage: redis-cli redis://docker.for.mac.localhost:6379
+redis-cli() {
+  if [ "$#" != 1 ]; then
+    echo "you must specify 'redis://username:password@host:port' as argument"
+    return 1
+  fi
+  # redis-cli -u redis://username:password@host:port
+  docker run -it --rm --name redis-cli ubuntu:latest bash -c 'apt-get update && apt-get install redis-tools -y; redis-cli -u ${1}; /bin/bash'
+}
+
 # for mac
 #alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
 
