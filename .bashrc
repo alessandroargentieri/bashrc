@@ -707,7 +707,7 @@ redis-cli() {
     return 1
   fi
   # redis-cli -u redis://username:password@host:port
-  docker run -it --rm --name redis-cli ubuntu:latest bash -c 'apt-get update && apt-get install redis-tools -y; redis-cli -u ${1}; /bin/bash'
+  docker run -it --rm --name redis-cli ubuntu:latest bash -c "apt-get update && apt-get install redis-tools -y; redis-cli -u ${1}; /bin/bash"
 }
 
 # for mac
