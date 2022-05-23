@@ -123,7 +123,7 @@ git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 # export PS1="\u@\h \[\033[32m\]\w\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "
 
 # shows file path but no host name
-export PS1="\[\033[32m\]\w\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ ";
+export PS1="\[\033[32m\]\w\[\033[36m\]\$(parse_git_branch)\[\033[34m\] $\[\033[00m\] ";
 
 # add golang path to PATH env var
 export PATH=$PATH:/usr/local/go/bin
