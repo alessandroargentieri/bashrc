@@ -131,6 +131,7 @@ export PATH=$PATH:/usr/local/go/bin
 alias docker-ip='sudo docker inspect --format="{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"'
 alias docker-ids='docker ps -q' # docker ps | cut -d " " -f 1
 alias docker-ps='docker ps --format "{{.ID}} --- {{.Names}}"'
+alias docker-images='docker images --format="{{.ID}} {{.Repository}}"'
 alias docker-stop-all='docker stop $(docker ps -q) 2>/dev/null || echo "No containers running"'
 
 # useful only for Mac OS Silicon M1, 
