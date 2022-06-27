@@ -144,6 +144,36 @@ docker() {
   fi
 }
 
+# keeps track of the branch from which a new branch is created.
+# it updates the history of the branch in case of rebase onto
+# when the branch is deleted it deletes its history also
+# es. (branchA) $ git checkout -b branchB
+#     (branchB) $ git branch --onto branchC branchA 
+#     (branchB) $ git branch history
+#     branchB created from branchA
+#     branchB rebased onto branchC
+git() {
+   if [ "${1}" == "checkout" ] && [ "${2}" == "-b" ]; then
+      mkdir -p .git/branches_history
+      echo "${3} created from $(/usr/local/bin/git branch-name)" > .git/branches_history/${3}
+   elif [ "${1}" == "rebase" ] && [ "${2}" == "--onto" ]; then
+      mkdir -p .git/branches_history
+      echo "$(/usr/local/bin/git branch --show-current) rebased onto ${3}" >> .git/branches_history/$(/usr/local/bin/git branch --show-current)
+   elif [ "${1}" == "branch" ]; then
+       if [ "${2}" == "-d" ] || [ "${2}" == "-D" ]; then
+          rm -rf .git/branches_history/${3} &> /dev/null
+       elif [ "${2}" == "history" ]; then
+             branchName=$(/usr/local/bin/git branch --show-current)
+             if [ "${3}" != "" ]; then 
+                branchName=${3}
+             fi
+             cat .git/branches_history/${branchName}
+             return 0
+       fi
+   fi
+   /usr/local/bin/git "${@}"
+}
+
 # executes a containerized version of maven so you don't have to install it to your computer.
 # you need to have docker installed and running.
 # append this snippet to your .bashrc/.zshrc/.bash_profile/.zsh_profile files.
