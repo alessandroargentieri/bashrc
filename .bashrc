@@ -126,6 +126,10 @@ git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 export PS1="\[\033[32m\]\w\[\033[36m\]\$(parse_git_branch)\[\033[34m\] $\[\033[00m\] ";
 
 # exporting go env vars and update the $PATH
+# by exporting these, you can use any binary you install in $GOPATH/bin, for example with:
+# $ go get github.com/go-delve/delve/cmd/dlv
+# you can recall directly 'dlv' command through your terminal:
+# $ dlv version
 # 'which go' returns /usr/local/go/bin/go
 export GOROOT=$(go env GOROOT) # /usr/local/go
 export GOPATH=$(go env GOPATH) # /Users/alessandro.argentieri/go
