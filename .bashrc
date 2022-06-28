@@ -125,8 +125,12 @@ git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 # shows file path but no host name
 export PS1="\[\033[32m\]\w\[\033[36m\]\$(parse_git_branch)\[\033[34m\] $\[\033[00m\] ";
 
-# add golang path to PATH env var
-export PATH=$PATH:/usr/local/go/bin
+# exporting go env vars and update the $PATH
+# 'which go' returns /usr/local/go/bin/go
+export GOROOT=$(go env GOROOT) # /usr/local/go
+export GOPATH=$(go env GOPATH) # /Users/alessandro.argentieri/go
+export PATH=$GOPATH/bin:$PATH
+export PATH=$PATH:$GOROOT/bin
 
 alias docker-ip='sudo docker inspect --format="{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"'
 alias docker-ids='docker ps -q' # docker ps | cut -d " " -f 1
