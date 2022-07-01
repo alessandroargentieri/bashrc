@@ -160,25 +160,47 @@ docker() {
 #     (branchB) $ git branch history
 #     branchB created from branchA
 #     branchB rebased onto branchC
+# What misses? the git switch command and the cancel operation for a rebase --onto
 git() {
+
    if [ "${1}" == "checkout" ] && [ "${2}" == "-b" ]; then
       mkdir -p .git/branches_history
-      echo "${3} created from $(/usr/local/bin/git branch-name)" > .git/branches_history/${3}
+      if [ "${4}" != "" ]; then
+        # git checkout -b <new-branch> <from-branch>
+        echo "${3} created from ${4}" > .git/branches_history/${3}
+      else
+        # git checkout -b <new-branch>
+        echo "${3} created from $(/usr/local/bin/git branch --show-current)" > .git/branches_history/${3}
+      fi
+    
    elif [ "${1}" == "rebase" ] && [ "${2}" == "--onto" ]; then
       mkdir -p .git/branches_history
-      echo "$(/usr/local/bin/git branch --show-current) rebased onto ${3}" >> .git/branches_history/$(/usr/local/bin/git branch --show-current)
+      if [ "${5}" != "" ]; then
+         # git rebase --onto <new-base> <old-base> <branch-to-be-rebased>
+         echo "${5} rebased onto ${3}" >> .git/branches_history/${5}
+      else 
+         # git rebase --onto <new-base> <old-base>
+         echo "$(/usr/local/bin/git branch --show-current) rebased onto ${3}" >> .git/branches_history/$(/usr/local/bin/git branch --show-current)
+      fi
+      
    elif [ "${1}" == "branch" ]; then
-       if [ "${2}" == "-d" ] || [ "${2}" == "-D" ]; then
+       if [ "${2}" == "-d" ] || [ "${2}" == "-D" ] || [ "${2}" == "--delete" ] || [ "${2}" == "--force-delete" ]; then
+          # git branch -d <branch> | git branch -D <branch>
           rm -rf .git/branches_history/${3} &> /dev/null
        elif [ "${2}" == "history" ]; then
-             branchName=$(/usr/local/bin/git branch --show-current)
              if [ "${3}" != "" ]; then 
+                # git branch history <branch>
                 branchName=${3}
+             else
+                # git branch history
+                branchName=$(/usr/local/bin/git branch --show-current)
              fi
              cat .git/branches_history/${branchName}
+             # return because git branch history is not a real git command, so git doesn't have to do anything
              return 0
        fi
    fi
+   # perform the real git command
    /usr/local/bin/git "${@}"
 }
 
