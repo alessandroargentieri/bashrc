@@ -244,6 +244,125 @@ golang() {
   docker logs --follow ${name}
 }
 
+# SOME NOTES ON DELVE IN DOCKER
+# build executable from docker
+# $ docker exec -it delve go build -gcflags='-N -l'
+# $ docker exec -it dlv bash -c "go mod download; GOOS=linux CGO_ENABLED=0 go install -gcflags='-N -l'; go build -gcflags='-N -l' -o delve-app"
+# ... then you can do this
+# $ docker exec -it delve dlv exec --listen=:2345 --api-version=2 ./delve-app
+# ... or this 
+# $ docker exec -it delve dlv debug
+# $ docker exec -it dlv bash -c "go mod download; GOOS=linux CGO_ENABLED=0 go build -gcflags='-N -l' -o delve-app"
+# $ docker exec -it delve dlv exec --listen=:2345 --headless=true --api-version=2 ./my-project-executable
+# API server listening at: [::]:2345
+# 2022-07-13T08:09:47Z warning layer=rpc Listening for remote connections (connections are not authenticated nor encrypted)
+# ... version
+# $ docker exec -it dlv bash -c 'dlv version’
+# $ docker exec -it dlv bash -c 'dlv debug main.go’
+
+
+# start debugging your golang project using delve in docker
+# go in the folder of your project, for example:
+#   $ cd myproject
+# start delve in docker (a container named 'myproject-dlv' will be created):
+#   $ delve start
+# the container is starting in background. Once it's ready you can:
+# - debug the project with:
+#   $ delve debug
+# - debug a test with:
+#   $ delve test <path/to/file.go> <path/to/file_test.go>
+# When it enters in debug mode you can execute the following steps:
+# - set a breakpoint
+#   (dlv) break handler/postalcode/get/get_postalcode_handler_test.go:183
+# - continue to the next breakpoint
+#   (dlv) continue
+# - print variables on breakpoint
+#   (dlv) print myVar.myAttr
+# - show variable type
+#   (dlv) whatis myVar.myAttr
+# - show all the current variables
+#   (dlv) vars
+# - show a specific variable
+#   (dlv) vars myVar.myAttr
+# - display variable changes at each step
+#   (dlv) display myVar.myAttr
+# - force a value for a variable
+#   (dlv) call myVar.myAttr = "hello"
+# - evaluate an expression
+#   (dlv) call myExpr(myInput)
+# - continue to the next line
+#   (dlv) next
+# - enter in the next function call
+#   (dlv) step
+# - exit from the function call
+#   (dlv) stepout
+# - show arguments for the current function
+#   (dlv) args
+# - prints the current stack of calls
+#   (dlv) stack
+# - list of the threads for the process
+#   (dlv) threads
+# - list of the goroutines
+#   (dlv) goroutines
+delve() {
+   container_name=${PWD##*/}-dlv
+ 
+   if [ "$1" == "init" ] || [ "$1" == "start" ]; then
+     
+      if [ ! -z `docker ps | grep $container_name` ]; then
+          echo "Delve is already running"
+      elif [ ! -z `docker ps -a | grep $container_name` ]; then
+          echo "Delve is already initialized. Starting..."
+          docker start $container_name
+      else
+          echo "Preparing delve for the project..."
+          /usr/local/bin/docker run -it -d \
+            --platform linux/arm64/v8 \
+            -p 2345:2345 \
+            -v $PWD:/go/app/ \
+            -w /go/app \
+            --name $container_name \
+            golang \
+            bash -c '
+              export GOROOT=$(go env GOROOT);
+              export GOPATH=$(go env GOPATH);
+              export PATH=$GOPATH/bin:$PATH;
+              export PATH=$PATH:$GOROOT/bin;
+              go install github.com/go-delve/delve/cmd/dlv@latest;
+              tail -f /dev/null' > /dev/null
+          # sleep 5
+          while [ -z `docker exec -it $container_name bash -c "dlv version" | grep 'Delve Debugger'` ]
+          do 
+            printf '.'; sleep 1; printf '.'; sleep 1; printf '.'; sleep 1
+            echo ""
+            tput cuu 1 && tput el
+          done 
+          echo "Delve is started"   
+      fi
+
+   elif [ "$1" == "debug" ]; then
+      docker exec -it $container_name dlv debug
+   elif [ "$1" == "test" ]; then
+      if [ "$2" != "help" ] || [ "$2" != "--help" ] || [ "$#" != 3 ]; then
+         echo "delve test <path/to/file.go> <path/to/file_test.go>"
+      else
+         docker exec -it $container_name dlv test $2 $3
+      fi
+   elif [ "$1" == "stop" ]; then
+      echo "stopping Delve..."
+      docker stop $container_name > /dev/null
+      sleep 1;
+      echo "Delve stopped."
+   elif [ "$1" == "remove" ]; then
+      echo "removing Delve from your project..."
+      docker rm -f $container_name > /dev/null
+      sleep 1;
+      echo "Delve removed."
+   else
+       docker exec -it $container_name dlv help
+   fi   
+}
+
 # runs bash v5 not present on MacOSx
 bash5() {
   docker run --rm -v $PWD:/usr/src/myapp -w /usr/src/myapp bash:5.1-alpine3.14 bash "$@"
