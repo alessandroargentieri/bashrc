@@ -152,6 +152,40 @@ docker() {
   fi
 }
 
+# allows using nerdctl (through colima started with --runtime containerd instead of docker)
+# in a fully compatible way with docker.
+# for example you can use -d and -i and -t tags like docker (with nerdctl is not possible):
+# $ docker run -it -d -p 8080:8080 --name mynginx nginx:latest 
+# $ nerdctl run -it -d -p 8080:8080 --name mynginx nginx:latest 
+nerdctl() {
+  if [ "$1" == "run" ]; then
+      detached=false
+      tty_or_interactive=false
+      for arg in "${@:2}"; do
+          if [ "$arg" == "-d" ]; then
+            detached=true
+          elif [ "$arg" == "-i" ] || [ "$arg" == "-t" ] || [ "$arg" == "-it" ]; then
+            tty_or_interactive=true
+          fi
+      done
+      if [ "$detached" == true ] && [ "$tty_or_interactive" == true ]; then
+        args=()
+        for arg in "${@:2}"; do
+            if [ "$arg" != "-i" ] && [ "$arg" != "-t" ] && [ "$arg" != "-it" ]; then
+              args+=("$arg")
+            else
+              echo "Warning: -d flag cannot be used in conjunction with $arg. Removing flag $arg."   
+            fi
+        done
+        colima nerdctl -- run "${args[@]}"
+      else
+        colima nerdctl -- "$@"
+      fi
+  else
+      colima nerdctl -- "$@"
+  fi
+}
+
 # keeps track of the branch from which a new branch is created.
 # it updates the history of the branch in case of rebase onto
 # when the branch is deleted it deletes its history also
