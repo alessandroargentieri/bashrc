@@ -442,6 +442,8 @@ wget() {
    fi
 }
 
+alias swagger='docker run -d -p 80:8080 --name swagger swaggerapi/swagger-editor'
+
 # exposes a port of your host on the internet through a generated public url.
 # example: you have a web server lostening on your host on http://localhost:8080/myservice/hello
 # to expose it you just have to write: $ localtunnel 8080
