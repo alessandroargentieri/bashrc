@@ -937,6 +937,18 @@ remove-first-last() {
   echo "${string:1:${#string}-2}"
 }
 
+# translate word or sentence in italian
+# usage:
+# $ trans-it 'Hello to everybody!'
+# $ trans-it look
+alias trans-it='docker run -it --platform linux/amd64 --rm soimort/translate-shell en:it'
+
+# translate word or sentence in english
+# usage:
+# $ trans-en 'Ciao a tutti!'
+# $ trans-en osservare
+alias trans-en='docker run -it --platform linux/amd64 --rm soimort/translate-shell it:en'
+
 alias goenv='go env'
 alias goenvs='go env'
 
