@@ -919,12 +919,14 @@ alias apice='echo "backtick = option+9"'
 # usage: redis-cli redis://docker.for.mac.localhost:6379
 redis-cli() {
   if [ "$#" != 1 ]; then
-    echo "you must specify 'redis://username:password@host:port' as argument"
+    echo "you must specify 'redis://username:password@host:port/dbnumber' as argument"
     return 1
   fi
   # redis-cli -u redis://username:password@host:port
   docker run -it --rm --name redis-cli ubuntu:latest bash -c "apt-get update && apt-get install redis-tools -y; redis-cli -u ${1}; /bin/bash"
 }
+
+alias redis-ui='docker run -it -rm -d -p 8001:8001 --name redis-ui redislabs/redisinsight:latest; echo "Visit localhost:8001 on your browser!"'
 
 # for mac
 #alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
