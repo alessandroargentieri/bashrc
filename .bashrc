@@ -914,6 +914,12 @@ alias kube-logs='kubectl logs --tail=100 -f' # <podname> --namespace <namespacen
 alias tilde='echo "option+5 = ~ "'
 alias apice='echo "backtick = option+9"'
 
+# starts redis-ui as docker container
+# remember to reference other containers in the same host with the container ip and not with localhost
+redis-ui() {
+   docker start redis-ui || docker run -it -d -p 8001:8001 --name redis-ui redislabs/redisinsight:latest
+   echo "Visit localhost:8001 on your browser!"
+}
 
 # ephemeral redis-cli terminal connected to a given host
 # usage: redis-cli redis://docker.for.mac.localhost:6379
@@ -925,8 +931,6 @@ redis-cli() {
   # redis-cli -u redis://username:password@host:port
   docker run -it --rm --name redis-cli ubuntu:latest bash -c "apt-get update && apt-get install redis-tools -y; redis-cli -u ${1}; /bin/bash"
 }
-
-alias redis-ui='docker run -it -rm -d -p 8001:8001 --name redis-ui redislabs/redisinsight:latest; echo "Visit localhost:8001 on your browser!"'
 
 # for mac
 #alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
