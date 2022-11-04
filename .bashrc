@@ -900,6 +900,29 @@ kube-node-pods() {
     kubectl get pods --all-namespaces -o wide --field-selector spec.nodeName=$1
 }
 
+# helps finding the kubernetes resource through its uid:
+# usage: 
+# $ find-by-uid replicaset 290df10d-a42c-4c77-9db8-be1941de13c4
+# you can type '/' and paste the uid to serach it into the snippet through less
+function find-by-uid {
+    if [ "$#" != 2 ]; then 
+       echo "you must specify the kind of the resource as first param and the uid as second param"
+       return 0
+    fi
+    resourcename=$1
+    uid=$2
+    line=`kubectl get ${resourcename} -A -o yaml | grep ${uid} -n | cut -d ':' -f 1`
+    if [ -z $line ]; then
+       echo "uid not found for the specified resource"
+       return 0
+    fi
+    headline=$(($line+100))
+    newline=`kubectl get ${resourcename} -A -o yaml | head -${headline} | tail -200 | grep ${uid} -n | cut -d ':' -f 1`
+    echo "uid found: give a look to line $newline of the given snippet"
+    sleep 3
+    kubectl get ${resourcename} -A -o yaml | head -${headline} | tail -200 | less -N
+}
+
 kube-logs-cheatsheet() {
   echo "Cheatsheet:"
   echo "kubectl logs --since=15m <podname>"
