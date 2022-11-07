@@ -905,6 +905,7 @@ kube-node-pods() {
 # $ find-by-uid replicaset 290df10d-a42c-4c77-9db8-be1941de13c4
 # you can type '/' and paste the uid to serach it into the snippet through less
 function find-by-uid {
+   #$ kubectl get civonetworks -A -o jsonpath='{range .items[*]}{.metadata.uid}{" -> "}{.metadata.name}{"\n"}'
     if [ "$#" != 2 ]; then 
        echo "you must specify the kind of the resource as first param and the uid as second param"
        return 0
@@ -921,6 +922,17 @@ function find-by-uid {
     echo "uid found: give a look to line $newline of the given snippet"
     sleep 3
     kubectl get ${resourcename} -A -o yaml | head -${headline} | tail -200 | less -N
+}
+
+# helps find the k8s resource by its id
+# usage:
+# $ kget replicasets | grep ceeae26e-3292-4b0d-8c08-7bc934c56388
+kget() {
+   if [ "$#" != 1 ]; then
+      echo "please specify the type of resource"
+      return 0
+   fi
+   kubectl get ${1} -A -o jsonpath='{range .items[*]}{"id: "}{.metadata.uid}{" name: "}{.metadata.name}{" namespace: "}{.spec.namespace}{"\n"}'
 }
 
 kube-logs-cheatsheet() {
