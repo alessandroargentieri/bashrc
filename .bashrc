@@ -561,8 +561,34 @@ extract () {
 }
 
 alias mkdir='mkdir -p'
-
 alias cp='cp -r'
+alias rm='rm -rf'
+
+# usage: 
+# $ t 1 # first level of the tree
+# $ t 2 # first two level of the tree
+# es. 
+#[149M]  .
+#├── [147M]  api-go
+#│   ├── [1.0K]  Dockerfile
+#│   ├── [ 11K]  README.md
+alias t='tree --du -h -L'
+
+# removes a file by overwriting its content so it's not recoverable anymore
+# usage:
+# $ secure-rm passwords.txt
+# $ cat passwords.txt | secure-rm
+secure-rm() {
+  filename=$1
+  if [ "$#" == 0 ]; then 
+     filename=$( < /dev/stdin )
+  fi
+  shred -zvu -n 5 $1
+  # -z add a final overwrite with zeros to hide shredding
+  # -v shows progress
+  # -u truncate and remove file after overwriting
+  # -n overwrite n times instead of 1
+}
 
 # echo 345 | copy | paste
 alias copy='xclip'
@@ -877,7 +903,19 @@ alias ip='zenity --info --text=$(hostname -I | cut -d " " -f 1)'
 # empty the content of a file:
 # usage: clean-file 2021-august.log
 clean-file() {
-    cat /dev/null > $1
+  filename=$1
+  if [ "$#" == 0 ]; then 
+     filename=$( < /dev/stdin )
+  fi
+    cat /dev/null > $filename
+}
+
+clear-file() {
+  filename=$1
+  if [ "$#" == 0 ]; then 
+     filename=$( < /dev/stdin )
+  fi
+    > $filename
 }
 
 alias mvndebug='~/workspace/apache-maven-3.8.3-bin/bin/mvnDebug.cmd' # clean install
