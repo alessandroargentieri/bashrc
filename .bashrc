@@ -136,6 +136,14 @@ export GOPATH=$(go env GOPATH) # /Users/alessandro.argentieri/go
 export PATH=$GOPATH/bin:$PATH
 export PATH=$PATH:$GOROOT/bin
 
+# needs: go install github.com/vc60er/deptree@latest
+# shows the golang project dependency tree:
+# usage:
+# $ gotree 4 # max depth: 4
+alias gotree='go mod graph | deptree -d'
+
+alias uninstall-go='rm -rvf `go env GOROOT`'
+
 alias docker-ip='sudo docker inspect --format="{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"'
 alias docker-ids='docker ps -q' # docker ps | cut -d " " -f 1
 alias docker-ps='docker ps --format "{{.ID}} --- {{.Names}}"'
