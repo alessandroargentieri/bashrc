@@ -117,7 +117,7 @@ if ! shopt -oq posix; then
 fi
 
 parse_git_branch() {
-git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
 # shows hostname and file path
 # export PS1="\u@\h \[\033[32m\]\w\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "
@@ -143,6 +143,8 @@ export PATH=$PATH:$GOROOT/bin
 alias gotree='go mod graph | deptree -d'
 
 alias uninstall-go='rm -rvf `go env GOROOT`'
+
+alias uuid="uuidgen | tr '[:upper:]' '[:lower:]'"
 
 alias docker-ip='sudo docker inspect --format="{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"'
 alias docker-ids='docker ps -q' # docker ps | cut -d " " -f 1
