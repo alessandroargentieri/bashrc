@@ -655,6 +655,16 @@ new-term-exec() { gnome-terminal -- bash -c "$1; exec bash"; }
 # if [ $(git stash list | grep $STASH_NAME | cut -f 1 -d ":" | head -1) ]; then echo "true"; else echo "false"; fi
 iff() { if [ $0 ]; then $1; else $2; fi; }
 
+tablechars() {
+   echo "┘ ┐ ┌ └ ┼ ├ ┤ ┴ ┬ │ ─"
+   echo ""
+   echo "┌────────┬────────┐"
+   echo "├────┬───┴────┬───┤"
+   echo "│    │        │   │"
+   echo "├────┼────────┼───┤"
+   echo "└────┴────────┴───┘"
+}
+
 # usage: random-string 10
 alias random-string='tr -dc A-Za-z0-9 </dev/urandom | head -c'
 
