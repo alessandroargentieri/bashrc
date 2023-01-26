@@ -144,7 +144,8 @@ alias gotree='go mod graph | deptree -d'
 
 alias uninstall-go='rm -rvf `go env GOROOT`'
 
-alias uuid="uuidgen | tr '[:upper:]' '[:lower:]'"
+# creates a lowercase uuid, saves into the clipboard and shows it in the terminal by pasting it
+alias uuid="uuidgen | tr '[:upper:]' '[:lower:]' | pbcopy; pbpaste"
 
 alias docker-ip='sudo docker inspect --format="{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"'
 alias docker-ids='docker ps -q' # docker ps | cut -d " " -f 1
