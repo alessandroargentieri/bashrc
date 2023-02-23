@@ -144,6 +144,9 @@ alias gotree='go mod graph | deptree -d'
 
 alias uninstall-go='rm -rvf `go env GOROOT`'
 
+alias unistall-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh)"'
+alias install-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"'
+
 # creates a lowercase uuid, saves into the clipboard and shows it in the terminal by pasting it
 alias uuid="uuidgen | tr '[:upper:]' '[:lower:]' | pbcopy; pbpaste"
 
