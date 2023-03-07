@@ -611,6 +611,24 @@ alias paste='xclip -o'
 # inline functions (put spaces close to {}, put ; at the end of each command)
 now() { date +"%A, %b %d, %Y %I:%M %p"; }
 
+# Markdown file viewer
+# Usage:
+# $ md filename.md
+md() {
+   if [ -z "$1" ]; then
+      echo "Please provide the name of the markdown (*.md) file you want to view"
+      return
+   fi
+   if [ -z `which pandoc` ]; then
+      printf "${RED}${BOLD}pandoc${RESET}${RED} is not installed! Please install${RESET}\n\n"
+      return
+   fi
+   if [ -z `which lynx` ]; then
+      printf "${RED}${BOLD}lynx${RESET}${RED} is not installed! Please install${RESET}\n\n"
+      return
+   fi
+   pandoc ${1} | lynx -stdin
+}
 
 function backup-and-modify() {
     echo "You are making a copy of $1 before you open it. Press enter to continue."
