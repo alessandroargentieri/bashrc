@@ -1029,6 +1029,11 @@ alias kube-logs='kubectl logs --tail=100 -f' # <podname> --namespace <namespacen
 alias tilde='echo "option+5 = ~ "'
 alias apice='echo "backtick = option+9"'
 
+# starts a pod with bash in the cluster current pointed by kubectl
+alias gimme-a-shell='kubectl run -it shell --image=bash --restart=Never --rm -- bash'
+# starts a pod with curl in the cluster current pointed by kubectl
+alias gimme-a-curl='kubectl run -it curl --image=curlimages/curl --restart=Never --rm -- sh'
+
 # starts redis-ui as docker container
 # remember to reference other containers in the same host with the container ip and not with localhost
 redis-ui() {
