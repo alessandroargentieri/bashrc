@@ -156,6 +156,14 @@ alias docker-ps='docker ps --format "{{.ID}} --- {{.Names}}"'
 alias docker-images='docker images --format="{{.ID}} {{.Repository}}"'
 alias docker-stop-all='docker stop $(docker ps -q) 2>/dev/null || echo "No containers running"'
 
+# finds the networkID of a given container
+# usage:
+# $ docker-network <container-name>
+docker-network() {
+   docker inspect -f '{{range .NetworkSettings.Networks}}{{.NetworkID}}{{end}}' ${1}
+   # docker run --network <network_id> <image_name>
+}
+
 # useful only for Mac OS Silicon M1, 
 # still working but useless for the other platforms
 docker() {
@@ -430,6 +438,7 @@ nohupp() {
 # finds processes attached to a file
 alias who-is-using='fuser -c' # who-is-using output.txt
 
+# explains how to have a background process
 background-process() {
   echo "There are two ways:"
   echo ""
@@ -439,6 +448,12 @@ background-process() {
   echo "./ciao.sh &>disown.out &"
   echo "disown"
   echo "tail -f disown.out"
+}
+
+# explains how to use jq
+how-to-jq() {
+   echo '{"Id": "abc123"}' | jq -r '.Id'
+   echo '[{"Id": "abc123"}, {"Id": "def456"}]' | jq -r '.[] | .Id'
 }
 
 # instructions to build scripts
