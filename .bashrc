@@ -511,6 +511,8 @@ alias idea='/snap/bin/intellij-idea-community'
 # curl json with headers in the response
 alias curl='curl -kLs' # allow insecure, follow redirects, hide progress
 alias curlj='curl -s -D - -H "Content-Type: application/json;charset=utf-8"'
+# curl with time calculation
+alias curlt='curl -s -w "%{time_total}\n" '
 
 # look for a process with ps command and grep
 alias grep-process='ps auxww | grep -v grep | grep' # <processname> or <PID>
