@@ -716,6 +716,13 @@ alias k='kubectl'
 alias gut='echo "`tput setaf 5``tput bold`You probabily meant git`tput sgr0`"; git'
 alias gi='echo "`tput setaf 5``tput bold`You probabily meant git`tput sgr0`"; git'
 
+// performs a backup of all the resource in all namespaces and saves the manifests in the specified file
+k8s-backup() {
+   read -p "${YELLOW}insert the path of the backup file ${CYAN}[~/backup.yaml]${RESET}: " path
+   path=${path:-$HOME/backup.yaml}
+   kubectl get ns | cut -d ' ' -f 1 | xargs -I {} kubectl get all -n {} -o yaml >> ${path}
+}
+
 # let you refresh the current terminal when you update .bashrc file adding aliases or functions
 alias bashrc='source ~/.bashrc'
 alias zshrc='source ~/.zshrc'
