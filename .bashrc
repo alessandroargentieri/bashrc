@@ -149,7 +149,7 @@ alias unistall-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.co
 alias install-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"'
 
 # creates a lowercase uuid, saves into the clipboard and shows it in the terminal by pasting it
-alias uuid="uuidgen | tr '[:upper:]' '[:lower:]' | pbcopy; pbpaste"
+alias uuid="uuidgen | tr -d '\n' | tr '[:upper:]' '[:lower:]' | pbcopy; pbpaste"
 
 alias docker-ip='sudo docker inspect --format="{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"'
 alias docker-ids='docker ps -q' # docker ps | cut -d " " -f 1
