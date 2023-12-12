@@ -157,6 +157,24 @@ alias docker-ps='docker ps --format "{{.ID}} --- {{.Names}}"'
 alias docker-images='docker images --format="{{.ID}} {{.Repository}}"'
 alias docker-stop-all='docker stop $(docker ps -q) 2>/dev/null || echo "No containers running"'
 
+# shows useful commands to clean up docker cache and free some space, according to the article: https://depot.dev/blog/docker-clear-cache
+docker-clear() {
+    echo "${GREEN}Possible actions: ${YELLOW}"
+    echo "  docker container prune -f"
+    echo "  docker image prune -f"
+    echo "  docker image prune -a"
+    echo "  docker volume prune -f"
+    echo "  docker buildx prune -f"
+    echo "  docker network prune -f"
+    echo "  docker system prune -f"
+    echo "  docker system prune --volumes -a -f"
+    echo "${GREEN}"
+    echo "Actual situation: ${YELLOW}"
+    echo "  docker system df"
+    echo "${RESET}"
+    docker system df
+}
+
 # finds the networkID of a given container
 # usage:
 # $ docker-network <container-name>
