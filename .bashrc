@@ -438,9 +438,9 @@ delve() {
    fi   
 }
 
-# runs bash v5 not present on MacOSx
+# run bash5 by sharing the current directory as volume (MacOs doesn't have it!)
 bash5() {
-  docker run --rm -v $PWD:/usr/src/myapp -w /usr/src/myapp bash:5.1-alpine3.14 bash "$@"
+  docker run --rm -d -v ~:/root -w /root --name bash5 bash:5.1-alpine3.14 tail -f /dev/null; docker exec -it bash5 bash
 }
 
 # nohup implementation using disown: just to play!
