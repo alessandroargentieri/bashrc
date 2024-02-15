@@ -145,6 +145,20 @@ alias gotree='go mod graph | deptree -d'
 
 alias uninstall-go='rm -rvf `go env GOROOT`'
 
+# upgrades the go version downloading the new version with go itself
+# usage: 
+# upgrade-go 1.22.0
+upgrade-go() {
+   if [ $# -ne 1 ]; then
+      echo "Usage: $ upgrade-go 1.22.0"
+      return 1
+   fi
+   NEW_GO_VERSION=$1
+   go install golang.org/dl/go$NEW_GO_VERSION@latest
+   go$NEW_GO_VERSION download
+   sudo mv "$(which go$NEW_GO_VERSION)" "$(which go)"
+}
+
 alias unistall-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh)"'
 alias install-brew='/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"'
 
