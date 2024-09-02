@@ -171,6 +171,13 @@ alias docker-ps='docker ps --format "{{.ID}} --- {{.Names}}"'
 alias docker-images='docker images --format="{{.ID}} {{.Repository}}"'
 alias docker-stop-all='docker stop $(docker ps -q) 2>/dev/null || echo "No containers running"'
 
+# returns the containers attached to a given network
+# usage: 
+# docker-network-details 1a965d75c7fd
+# docker-network-details mynetwork
+docker-network-details() { docker network inspect --format '{{range $cid,$v := .Containers}}{{printf "%s: %s\n" $cid $v.Name}}{{end}}' $1; }
+
+
 # shows useful commands to clean up docker cache and free some space, according to the article: https://depot.dev/blog/docker-clear-cache
 docker-clear() {
     echo "${GREEN}Possible actions: ${YELLOW}"
