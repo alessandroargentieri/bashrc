@@ -965,6 +965,11 @@ k8s-apigroups() {
     kubectl api-resources -o wide
 }
 
+# finds the namespace of a resource via grep and copies into the clipboard
+# usage:
+# find-ns deployment nginx
+find-ns(){ kubectl get $1 -A | grep $2 | cut -d ' ' -f 1 | copy; }
+
 # moves a bash script to /usr/local/bin to let you recall directly without using ./<scriptname>.
 # it allows you to specify an alias:
 # example:
